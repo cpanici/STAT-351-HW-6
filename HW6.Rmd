@@ -12,6 +12,7 @@ library(GmAMisc)
 library(VIM)
 library(mice)
 height_arm = read.csv("C:/Users/lwsc2/Documents/College Files/2020 SPRING/STAT 351/HW 6/HW 6/heightarm.csv", header = T)
+age_footspan = read.csv("C:/Users/lwsc2/Documents/College Files/2020 SPRING/STAT 351/HW 6/HW 6/agefootspan.csv", header = T)
 ```
 
 1. (a)
@@ -52,13 +53,13 @@ chiperm(tab,B = 1000)
 
 At alpha = .05, we fail to reject the null. There is not sufficient evidence to suggest a significant association between handedness and favorite season.
 
-(c) I cleaned the data manually in Excel since there didn't seem to really be a standard pattern to the way that things were inputted incorrectly.
+(c) I cleaned the data manually in Excel since there didn't seem to really be a standard pattern to the way that things were inputted incorrectly. Along with height and armspan, I included age and footspan since they might be helpful when imputing.
 
 With CART imputation:
 
-Intercept: 48.5136927  Std Err: 7.21623028
+Intercept: 47.456990  Std Err: 7.22191294
 
-Slope: 0.7159695  Std Err: 0.04276844
+Slope: 0.721375  Std Err: 0.04282807
 
 ```{r, results='hide'}
 tempdata = mice(height_arm,maxit=50,meth='cart',seed=500)
@@ -71,9 +72,9 @@ summary(pool(fit))
 
 With Random Forest imputation:
 
-Intercept: 47.4342745  Std Err: 6.77751962
+Intercept: 61.8807713  Std Err: 6.90341999
 
-Slope: 0.7222957  Std Err: 0.04040624
+Slope: 0.6354562  Std Err: 0.04064709
 
 ```{r, results='hide'}
 tempdata2 = mice(height_arm,maxit=50,meth='rf',seed=500)
