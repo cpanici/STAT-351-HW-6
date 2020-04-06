@@ -45,7 +45,11 @@ height_arm = data.frame(age_footspan[1:2], height_arm[1:2])
 
 tempdata = mice(height_arm,maxit=50,meth='cart',seed=500)
 fit = with(tempdata, lm(Height ~ Armspan))
-summary(pool(fit))
+pool1 = summary(pool(fit))
+pool1$estimate[1]
+pool1$estimate[2]
+pool1$std.error[1]
+pool1$std.error[2]
 
 tempdata2 = mice(height_arm,maxit=50,meth='rf',seed=500)
 fit = with(tempdata2, lm(Height ~ Armspan))

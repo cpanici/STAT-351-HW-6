@@ -57,30 +57,38 @@ At alpha = .05, we fail to reject the null. There is not sufficient evidence to 
 
 With CART imputation:
 
-Intercept: 47.456990  Std Err: 7.22191294
-
-Slope: 0.721375  Std Err: 0.04282807
-
 ```{r, results='hide'}
 tempdata = mice(height_arm,maxit=50,meth='cart',seed=500)
 ```
 
 ```{r, echo = T}
 fit = with(tempdata, lm(Height ~ Armspan))
-summary(pool(fit))
+pool1 = summary(pool(fit))
+# Intercept Estimate
+pool1$estimate[1]
+# Slope Estimate
+pool1$estimate[2]
+# Intercept Std Err
+pool1$std.error[1]
+#Slope Std Err
+pool1$std.error[2]
 ```
 
 With Random Forest imputation:
-
-Intercept: 61.8807713  Std Err: 6.90341999
-
-Slope: 0.6354562  Std Err: 0.04064709
 
 ```{r, results='hide'}
 tempdata2 = mice(height_arm,maxit=50,meth='rf',seed=500)
 ```
 
 ```{r, echo = T}
-fit = with(tempdata2, lm(Height ~ Armspan))
-summary(pool(fit))
+fit2 = with(tempdata2, lm(Height ~ Armspan))
+pool2 = summary(pool(fit2))
+# Intercept Estimate
+pool2$estimate[1]
+# Slope Estimate
+pool2$estimate[2]
+# Intercept Std Err
+pool2$std.error[1]
+#Slope Std Err
+pool2$std.error[2]
 ```
