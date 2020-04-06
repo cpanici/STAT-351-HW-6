@@ -1,0 +1,85 @@
+---
+title: "STAT 351 HW 6"
+author: "Christian Panici"
+date: "4/3/2020"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+ilschool = read.csv("C:/Users/lwsc2/Downloads/ill_school_data.csv", header = T)
+library(GmAMisc)
+library(VIM)
+library(mice)
+height_arm = read.csv("C:/Users/lwsc2/Documents/College Files/2020 SPRING/STAT 351/HW 6/HW 6/heightarm.csv", header = T)
+```
+
+1. (a)
+
+This dataset contains a variety of information about 9th-12th graders in Illinois. One characteristic I found interesting had to do with the age distribution of the students. While the majority of students fell within the same span of ages (which makes sense given their grades), there were a few outliers, including two 32-year olds and a 40-year old. There was also a 99-year old, but this seems more attributable to an error in the survey than a near-centenarian sitting in algebra class. This person also recorded 'Boat' as their mode of transportation, suggesting that they may not have taken the survey all that seriously.
+
+Looking at means of transportation, there were a couple others that reported taking a boat to school, which I struggle to believe as a lifelong Illinois resident. Based on some of these results, we should be careful when working with this data, as it may not all be accurate.
+
+Beyond these two I highlighted, there are a variety of other tidbits collected such as their favorite subjects, seasons, and activities as well as their feelings on issues like climate change. Certainly, there could be some interesting analysis done here given that the data is properly inspected for legitimacy.
+
+```{r echo = T, fig.height = 4, fig.width = 5}
+boxplot(ilschool[6], main = "Age in Years")
+summary(ilschool[12])
+```
+
+(b) H0: There is no significant association between handedness and favorite season.
+
+HA: There is a significant association between handedness and favorite season.
+
+It seems okay to remove rows with missing observations since we're still left with about 90% of the data left after removal. The missingness seems MCAR as well, unrelated to any particular variable.
+
+We are performing a test for association with a contingency table here, but some of the cell frequencies are small, so we should use the chi-squared permutation test to calculate an exact distribution rather than use an approximation.
+
+```{r echo = T}
+ilschool[ilschool == ""] = NA
+hand_season <- data.frame(ilschool$Handed, ilschool$Favorite_Season)
+colnames(hand_season) = c("Handed", "Season")
+aggr(hand_season)
+
+missing_removed = hand_season[complete.cases(hand_season),]
+
+tab = table(missing_removed$Handed, missing_removed$Season)
+# Still getting extra rows for some reason
+tab = tab[-1,-1]
+tab
+chiperm(tab,B = 1000)
+```
+
+At alpha = .05, we fail to reject the null. There is not sufficient evidence to suggest a significant association between handedness and favorite season.
+
+(c) I cleaned the data manually in Excel since there didn't seem to really be a standard pattern to the way that things were inputted incorrectly.
+
+With CART imputation:
+
+Intercept: 48.5136927  Std Err: 7.21623028
+
+Slope: 0.7159695  Std Err: 0.04276844
+
+```{r, results='hide'}
+tempdata = mice(height_arm,maxit=50,meth='cart',seed=500)
+```
+
+```{r, echo = T}
+fit = with(tempdata, lm(Height ~ Armspan))
+summary(pool(fit))
+```
+
+With Random Forest imputation:
+
+Intercept: 47.4342745  Std Err: 6.77751962
+
+Slope: 0.7222957  Std Err: 0.04040624
+
+```{r, results='hide'}
+tempdata2 = mice(height_arm,maxit=50,meth='rf',seed=500)
+```
+
+```{r, echo = T}
+fit = with(tempdata2, lm(Height ~ Armspan))
+summary(pool(fit))
+```
