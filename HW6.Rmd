@@ -92,3 +92,5 @@ pool2$std.error[1]
 #Slope Std Err
 pool2$std.error[2]
 ```
+
+(d) GitHub link: https://github.com/cpanici/STAT-351-HW-6
